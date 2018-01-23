@@ -19,3 +19,6 @@ Must contain length, location, and order of each chunk.
 **Header:** contains hash of file name, timestamp of when it was last verified, and length.
 
 **Content:** consecutive bytes of the original encrypted file. Should be gibberish to any computer it is stored on.
+
+## Rules for computers participating in the scheme
+
