@@ -25,7 +25,7 @@ Since everything is stored on someone else's computer, ideally ledgers should be
 
 So the decision is between having a user's secret lead directly to one block containing all the info for all the files, or leading to one block that contains the info for each ledger for each file, and those ledgers are also different blocks.
 
-~~How do you find your starting block among so many other blocks?~~ It's name is derived from the publisher's secret.
+~~How do you find your starting block among so many other blocks?~~ Its name is derived from the publisher's secret.
 
 ## Encryption
 
