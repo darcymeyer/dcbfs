@@ -1,6 +1,4 @@
 from Crypto.Cipher import AES
+import util
 
-
-def encrypt_file(file, key):
-	pass
-
+# initialization vector does not need to be secret
