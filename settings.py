@@ -1,8 +1,12 @@
 # settings for where to store and access files
 
-DCBFS_MAIN_DIR = '~/.dcbfs/'
+# Directory settings
+DCBFS_MAIN_DIR = os.path.expanduser('~/.dcbfs/')
 TEMP_DIR = DCBFS_MAIN_DIR + 'temp/'
 STORAGE_DIR = DCBFS_MAIN_DIR + 'storage/'
+
+# This probably won't be a single file in the production version
 GIANT_LEDGER_FILE = DCBFS_MAIN_DIR + 'giant_ledger'
-BLOCKSIZE = 256 # 256 bytes; will be much larger after testing phase
+
 # BLOCKSIZE must be a multiple of 16, and its unit is bytes
+BLOCKSIZE = 256 # will be much larger after testing phase
