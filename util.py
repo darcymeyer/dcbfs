@@ -4,6 +4,7 @@ from settings import *
 import os
 from time import time
 from binascii import hexlify
+import re
 
 def hash_data(data):
 	h = SHA512.new() # hashing algorithm subject to change
@@ -58,15 +59,16 @@ def assemble_content(out_file, *args):
 
 def update_file_ledger(action, filename, num_blocks):
 	# open ledger
-
-	# update ledger
-	if action=='add':
-		pass
-	elif action=='remove':
-		pass
-
-	# close ledger
-
+	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f: # don't hardcode this
+		# update ledger
+		ledger = f.read()
+	with open(DCBFS_MAIN_DIR+"personal_ledger", 'w') as f:
+		if action=='add':
+			ledger += filename+' : '+str(num_blocks)+'\n'
+			f.write(ledger)
+		elif action=='remove':
+			ledger = re.sub(filename+' : '+str(num_blocks)+'\n', '', ledger)
+			f.write(ledger)
 
 def timestamp():
 	t = int(time())
@@ -109,3 +111,9 @@ def get_remote_block(id_hash):
 		block = f.read()
 		print("get_remote_block return:", block)
 		return block
+
+def get_num_blocks(filename):
+	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f:
+		ledger = f.read()
+		num = re.match('(?:'+filename+' : )([0-9]+)', ledger).group(1)
+		return int(num)

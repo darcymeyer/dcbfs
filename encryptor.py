@@ -20,9 +20,10 @@ def upload_file(filepath):
 			f.write(block)
 		print("block", block_num, "name:", hexlify(block[:64]).decode('utf-8'), "bytes:", block)
 		block_num += 1
-	#update_file_ledger('add', filename, block_num)
+	update_file_ledger('add', filename, block_num)
 
-def recreate_file(filename, num_blocks):
+def recreate_file(filename):
+	num_blocks = get_num_blocks(filename)
 	with open(OUT_DIR + filename, 'ab+') as f:
 		key = input('enter key:')
 		block_num = 0
@@ -32,3 +33,4 @@ def recreate_file(filename, num_blocks):
 			content = disassemble_block(block, block_num, key)
 			f.write(content)
 			block_num += 1
+	update_file_ledger('remove', filename, block_num)
