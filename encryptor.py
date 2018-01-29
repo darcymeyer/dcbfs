@@ -13,15 +13,22 @@ def upload_file(filepath):
 	#eventually `filepath` should be passed directly to `generate_block_content`
 	filename = os.path.basename(filepath)
 	block_num = 0
-	for block in generate_block_content(raw_file):
-		id_hash = hash_data(filename +"/"+ str(block_num))
-		# "/" or any character not allowed in a filename
-		iv = os.urandom(16)
-		block_content = encrypt_block(block, key, iv)
-		md5 = checksum(block_content)
-		total_block = (id_hash + timestamp() + iv + md5 + block_content)
-		with open(STORAGE_DIR + hexlify(id_hash).decode('utf-8'), 'wb') as f:
+	for content in generate_block_content(raw_file):
+		block = make_block(filename, content, block_num, key)
+		with open(STORAGE_DIR + hexlify(block[:64]).decode('utf-8'), 'wb') as f:
 		# i question whether this is too long of a filename
-			f.write(total_block)
+			f.write(block)
+		print("block", block_num, "name:", hexlify(block[:64]).decode('utf-8'), "bytes:", block)
 		block_num += 1
 	#update_file_ledger('add', filename, block_num)
+
+def recreate_file(filename, num_blocks):
+	with open(OUT_DIR + filename, 'ab+') as f:
+		key = input('enter key:')
+		block_num = 0
+		while block_num < num_blocks:
+			id_hash = hash_data(filename+"/"+str(block_num))
+			block = get_remote_block(id_hash)
+			content = disassemble_block(block, block_num, key)
+			f.write(content)
+			block_num += 1

@@ -14,9 +14,9 @@ Contains id, location, timestamp of each block, and revocation statements.
 
 Also, would this be too big?
 
-### Individual File Ledger
+### Personal Ledger
 
-Contains the ids of the blocks that form the original file, their order, and the keys with which to decrypt them. Its own id is a hash of the filename and the publisher name.
+Contains the information necessary (filename, amount of blocks, derived key; derived key is hash of filename and key) to retrieve blocks that form the original file, their order, and the keys with which to decrypt them. Its own id is a hash of the filename and the publisher name.
 
 ### Personal Ledger
 
@@ -26,7 +26,7 @@ Each publisher has one personal ledger. Its id is a hash of the publisher's secr
 
 Each block has padding added to it so they are all the same size. They will have headers which contain the timestamp of when they were last checked and a hash of their id. Blocks are stored on individual machines.
 
-**Header:** 116 bytes: 64 bytes for a sha512 hash of some identifying information, 4 bytes for a timestamp (unix epoch time), 16 bytes for the initialization vector, 32 bytes for a md5 hash of the content (used as checksum)
+**Header:** 100 bytes: 64 bytes for a sha512 hash of some identifying information, 4 bytes for a timestamp (unix epoch time), 16 bytes for the initialization vector, 16 bytes for a md5 hash of the content (used as checksum)
 
 ## Rules for computers participating in the scheme
 

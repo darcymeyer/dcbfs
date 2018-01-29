@@ -15,14 +15,16 @@ Or, there could be one giant ledger that contains all the locations of the block
 
 We should definitely separate the information of which blocks belong to which files in which order from the number and locations of each block. This necessitates the giant ledger with all the blocks. [all good]
 
-**Users still need the ability to revoke blocks to stop being copied and be deleted. If all machines are duplicating blocks based on the giant ledger, that is where the information would need to be available about no longer duplicating a block. There would also have to be a cryptographic relationship between the publisher of a block and the block, so people don't try to delete each other's blocks.**
+Users still need the ability to revoke blocks to stop being copied and be deleted. If all machines are duplicating blocks based on the giant ledger, that is where the information would need to be available about no longer duplicating a block. There would also have to be a cryptographic relationship between the publisher of a block and the block, so people don't try to delete each other's blocks.
 
 **How does one know they have a correct copy of the ledger (blockchain)? While still having the ability to delete all traces of a file? Would the back end of the blockchain gradually delete itself (but then we might loose the ability to resolve forks)?**
 
 Since everything is stored on someone else's computer, ideally ledgers should be indistinguishable from blocks. [all good]
 
-So the decision is between having a user's secret lead directly to one block containing all the info for all the files, or leading to one block that contains the info for each ledger for each file, and those ledgers are also different blocks. [second option]
+So the decision is between having a user's secret lead directly to one block containing all the info for all the files, or leading to one block that contains the info for each ledger for each file, and those ledgers are also different blocks. [first option]
 
 ~~How do you find your starting block among so many other blocks?~~ Its name is derived from the publisher's secret.
 
 **NOTE: salt things**
+
+There's no way to keep personal ledgers anonymous. They need to be accessible with a single piece of information, which will be hashed every time, and that won't change. 
