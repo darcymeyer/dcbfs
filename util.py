@@ -36,17 +36,18 @@ def decrypt_content(data, key, iv):
 	return decrypted
 
 # eventually this function should read directly from a file
-def generate_block_content(content, blocksize=BLOCKSIZE):
-	# `content` is the bytes of an unencrypted file
-	content_length = len(content)
-	print("gen block content: length", content_length)
-	counter = 0
-	while counter < content_length:
-		content_slice = content[counter:min(counter+blocksize, content_length)]
-		block = content_slice + (blocksize-(len(content_slice)-1)%blocksize-1)*'\x00'
-		print("slice len:", len(content_slice), "block len:", len(block))
-		yield block
-		counter += blocksize
+# ^ and now it does
+def generate_block_content(filepath, blocksize=BLOCKSIZE):
+	# just reads out the file and chunks it
+	padding_length = 0
+	with open(filepath, 'rb') as f:
+		while padding_length==0:
+			content_slice = f.read(blocksize)
+			padding_length = blocksize-(len(content_slice)-1)%blocksize-1
+			block = content_slice + padding_length*b'\x00'
+			# should really add a note within the block content of how many null bytes were added
+			print("slice len:", len(content_slice), "block len:", len(block))
+			yield block
 
 def assemble_content(out_file, *args):
 	# `outfile` is a filename string
@@ -57,7 +58,7 @@ def assemble_content(out_file, *args):
 				of.write(bf.read())
 			os.remove(blockfile)
 
-def update_file_ledger(action, filename, num_blocks):
+def access_file_ledger(action, filename, num_blocks):
 	# open ledger
 	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f: # don't hardcode this
 		# update ledger

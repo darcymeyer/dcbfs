@@ -8,19 +8,17 @@ from binascii import hexlify
 
 def upload_file(filepath):
 	key = input('enter key:')
-	with open(filepath, 'r') as f:
-		raw_file = f.read()
-	#eventually `filepath` should be passed directly to `generate_block_content`
 	filename = os.path.basename(filepath)
 	block_num = 0
-	for content in generate_block_content(raw_file):
+	for content in generate_block_content(filepath):
 		block = make_block(filename, content, block_num, key)
 		with open(STORAGE_DIR + hexlify(block[:64]).decode('utf-8'), 'wb') as f:
 		# i question whether this is too long of a filename
 			f.write(block)
 		print("block", block_num, "name:", hexlify(block[:64]).decode('utf-8'), "bytes:", block)
 		block_num += 1
-	update_file_ledger('add', filename, block_num)
+	access_file_ledger('add', filename, block_num)
+	# TODO: add to the giant ledger
 
 def recreate_file(filename):
 	num_blocks = get_num_blocks(filename)
@@ -33,4 +31,8 @@ def recreate_file(filename):
 			content = disassemble_block(block, block_num, key)
 			f.write(content)
 			block_num += 1
-	update_file_ledger('remove', filename, block_num)
+	# access_file_ledger('remove', filename, block_num)
+
+def delete_file(filename):
+	access_file_ledger('remove', filename, block_num)
+	# TODO: release revocation statements
