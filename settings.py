@@ -12,4 +12,4 @@ OUT_DIR = DCBFS_MAIN_DIR + 'out/'
 GIANT_LEDGER_FILE = DCBFS_MAIN_DIR + 'giant_ledger'
 
 # BLOCKSIZE must be a multiple of 16, and its unit is bytes
-BLOCKSIZE = 16 # will be much larger after testing phase
+BLOCKSIZE = 512 # will be much larger after testing phase

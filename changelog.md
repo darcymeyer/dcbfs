@@ -1,5 +1,7 @@
 # Changelog
 
+*Jan 30:* 
+
 *Jan 29:* record files on ledger, better memory usage, add changelog
 
 *Jan 28:* add functions to fully encrypt and decrypt file, add code of conduct
