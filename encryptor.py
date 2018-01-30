@@ -15,7 +15,6 @@ def upload_file(filepath):
 		with open(STORAGE_DIR + hexlify(block[:64]).decode('utf-8'), 'wb') as f:
 		# i question whether this is too long of a filename
 			f.write(block)
-		print("block", block_num, "name:", hexlify(block[:64]).decode('utf-8'), "bytes:", block)
 		block_num += 1
 	access_file_ledger('add', filename, block_num)
 	# TODO: add to the giant ledger
@@ -27,6 +26,7 @@ def recreate_file(filename):
 		block_num = 0
 		while block_num < num_blocks:
 			id_hash = hash_data(filename+"/"+str(block_num))
+			# this is a terrible id. the hash should include a nonce or something (to be stored in personal ledger)
 			block = get_remote_block(id_hash)
 			content = disassemble_block(block, block_num, key)
 			f.write(content)

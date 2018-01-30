@@ -23,20 +23,16 @@ def checksum(data, c=None):
 
 def encrypt_content(data, key, iv):
 	# `data` is already padded
-	print("encrypting: ", data, len(data), ", key/iv: ", key, iv)
 	encryptor = AES.new(key, AES.MODE_CBC, iv)
 	encrypted = encryptor.encrypt(data)
 	return encrypted
 
 def decrypt_content(data, key, iv):
 	# `data` does not contain the header
-	print("decrypt_content: ", data, len(data), ", key/iv: ", key, iv)
 	decryptor = AES.new(key, AES.MODE_CBC, iv)
 	decrypted = decryptor.decrypt(data)
 	return decrypted
 
-# eventually this function should read directly from a file
-# ^ and now it does
 def generate_block_content(filepath, blocksize=BLOCKSIZE):
 	# just reads out the file and chunks it
 	padding_length = 0
@@ -46,7 +42,6 @@ def generate_block_content(filepath, blocksize=BLOCKSIZE):
 			padding_length = blocksize-(len(content_slice)-1)%blocksize-1
 			block = content_slice + padding_length*b'\x00'
 			# should really add a note within the block content of how many null bytes were added
-			print("slice len:", len(content_slice), "block len:", len(block))
 			yield block
 
 def assemble_content(out_file, *args):
@@ -59,9 +54,7 @@ def assemble_content(out_file, *args):
 			os.remove(blockfile)
 
 def access_file_ledger(action, filename, num_blocks):
-	# open ledger
 	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f: # don't hardcode this
-		# update ledger
 		ledger = f.read()
 	with open(DCBFS_MAIN_DIR+"personal_ledger", 'w') as f:
 		if action=='add':
@@ -80,7 +73,7 @@ def timestamp():
 	t >>= 8
 	b[1] = t & 0xFF
 	t >>= 8
-	b[0] = t & 0xF0
+	b[0] = t & 0xFF
 	return b
 
 def make_block(filename, content, block_num, key):
@@ -89,28 +82,22 @@ def make_block(filename, content, block_num, key):
 	block_content = encrypt_content(content, key, iv)
 	md5 = checksum(block_content) # leave this line alone!
 	block = id_hash + timestamp() + iv + md5 + block_content
-	print("in make_block: id_hash", len(id_hash), "timestamp:", len(timestamp()), "iv", len(iv), "md5", len(md5), "block_content", len(block_content))
 	return block
 
 def disassemble_block(block, block_num, key):
 	# `block_num` is not currently used (?)
 	iv = block[68:68+16]
 	encrypted = block[100:]
-	print("in disassemble_block, block is:", block)
-	print("in disassemble_block, encrypted is:", encrypted)
 	# checksum should already have been verified
 	decrypted = decrypt_content(encrypted, key, iv)
-	print("disassemble block returning:", decrypted)
 	return decrypted
 
 def get_remote_block(id_hash):
 	#eventually this will query the giant ledger and grab the block from a remote machine
+	# it should also check with the md5 checksum
 	blockname = hexlify(id_hash).decode('utf-8')
-	print("get rem block name is:", blockname)
 	with open(STORAGE_DIR+blockname, 'rb') as f:
-		print("reading from:", STORAGE_DIR+blockname)
 		block = f.read()
-		print("get_remote_block return:", block)
 		return block
 
 def get_num_blocks(filename):
