@@ -1,6 +1,6 @@
 # Changelog
 
-*Jan 30:* add shell to examine blocks
+*Jan 30:* add shell to examine blocks, cleaning up
 
 *Jan 29:* record files on ledger, better memory usage, add changelog
 
