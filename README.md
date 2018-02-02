@@ -37,3 +37,8 @@ Each block has padding added to it so they are all the same size. They will have
 **Deleting files:** For a use to delete a file, it issues a revocation statement for all the blocks of the file and the individual file ledger onto the giant ledger. 
 
 **Local Maintenance:** If a computer finds a block on itself with a really old timestamp, it is deleted.
+
+## Communication
+
+uses FTP (chosen for anonymous logins)
+

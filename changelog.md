@@ -1,5 +1,7 @@
 # Changelog
 
+*Feb 2:* choose FTP as transfer protocol
+
 *Jan 30:* add shell to examine blocks, cleaning up
 
 *Jan 29:* record files on ledger, better memory usage, add changelog
