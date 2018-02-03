@@ -1,5 +1,7 @@
 # Decentralized Cloud-Based File Storage
 
+A way to encrypt and upload files to multiple servers.
+
 ## Encryption
 
 AES, CBC. (If someone wants to argue for different encryption, please do.)
@@ -8,11 +10,7 @@ AES, CBC. (If someone wants to argue for different encryption, please do.)
 
 ### Giant Ledger
 
-Contains id, location, timestamp of each block, and revocation statements.
-
-*MUST FIGURE OUT A WAY TO ISSUE A CRYPTOGRAPHICALLY SECURE REVOCATION STATEMENT FOR A BLOCK (THAT IS ALSO NOT ABLE TO BE RELATED TO OTHER BLOCKS IN THE SAME FILE)*
-
-Also, would this be too big?
+Each entry contains id, location, timestamp of each block; and revocation statements.
 
 ### Personal Ledger
 
