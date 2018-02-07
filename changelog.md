@@ -1,5 +1,7 @@
 # Changelog
 
+*Feb 6:* research into FTP
+
 *Feb 2:* choose FTP as transfer protocol
 
 *Jan 30:* add shell to examine blocks, cleaning up
