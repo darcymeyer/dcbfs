@@ -2,3 +2,4 @@ testfiles/*
 __pycache__/*
 *.pyc
 thoughts.md
+venv/*

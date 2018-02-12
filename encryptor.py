@@ -3,11 +3,18 @@ from util import *
 import time
 import os
 from binascii import hexlify
+import hashlib
 
 # note: initialization vector does not need to be secret
 
 def upload_file(filepath):
-	key = input('enter key:')
+	"""
+	Uploads a file to a local repo.
+
+	# TODO: add to the giant ledger
+	"""
+	password = input('Enter password: ')
+	key = hashlib.sha256(password.encode()).digest()
 	filename = os.path.basename(filepath)
 	block_num = 0
 	for content in generate_block_content(filepath):
@@ -17,12 +24,12 @@ def upload_file(filepath):
 			f.write(block)
 		block_num += 1
 	access_file_ledger('add', filename, block_num)
-	# TODO: add to the giant ledger
 
 def recreate_file(filename):
 	num_blocks = get_num_blocks(filename)
 	with open(OUT_DIR + filename, 'ab+') as f:
-		key = input('enter key:')
+		password = input('Enter password: ')
+		key = hashlib.sha256(password.encode()).digest()
 		block_num = 0
 		while block_num < num_blocks:
 			id_hash = hash_data(filename+"/"+str(block_num))
