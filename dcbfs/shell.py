@@ -1,5 +1,5 @@
-from dcbfs.settings import *
-from dcbfs.encryptor import *
+from .settings import *
+from .encryptor import *
 import os
 import click
 from datetime import datetime

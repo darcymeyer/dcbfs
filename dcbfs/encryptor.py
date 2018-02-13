@@ -1,5 +1,5 @@
-from dcbfs.settings import *
-from dcbfs.util import *
+from .settings import *
+from .util import *
 import time
 import os
 from binascii import hexlify
