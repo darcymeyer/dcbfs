@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='dcbfs',
       version='1.0',
@@ -7,4 +7,9 @@ setup(name='dcbfs',
       author_email='dmeyer@andover.edu',
       url='darcymeyer.github.io',
       packages=['dcbfs'],
+      entry_points = {
+              'console_scripts': [
+                  'dcbfs = dcbfs.shell:main',                  
+              ],              
+          },
      )

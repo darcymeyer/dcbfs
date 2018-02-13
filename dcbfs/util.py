@@ -1,6 +1,6 @@
 from Crypto.Hash import SHA512, MD5
 from Crypto.Cipher import AES
-from settings import *
+from dcbfs.settings import *
 import os
 from time import time
 from binascii import hexlify

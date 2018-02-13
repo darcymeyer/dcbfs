@@ -1,8 +1,8 @@
-from settings import *
-from datetime import datetime
-from encryptor import *
+from dcbfs.settings import *
+from dcbfs.encryptor import *
 import os
 import click
+from datetime import datetime
 
 cli = click.Group()
 def block_examination_help_text():
@@ -86,6 +86,9 @@ def init():
         os.makedirs(strg_dir)
     open(root+'personal_ledger', 'a').close()
 
+def main():
+    '''Used for entry point'''
+    cli()
 
 if __name__ == '__main__':
-    cli()
+    main()
