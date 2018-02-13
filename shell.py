@@ -25,8 +25,8 @@ def human_readable(timestamp):
     return hr.strftime('%Y-%m-%d %H:%M:%S')
 
 
-@cli.command()
-def examine():
+@cli.command(name='examine')
+def examine_block():
     '''
     Interface for examining blocks.
     '''
