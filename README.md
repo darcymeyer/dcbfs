@@ -2,6 +2,11 @@
 
 A way to encrypt and upload files to multiple servers.
 
+## Install
+
+To install dcbfs to `/usr/local/bin/` use the line below.
+`python setup.py install --install-scripts=/usr/local/bin`
+
 ## Encryption
 
 AES, CBC. (If someone wants to argue for different encryption, please do.)
