@@ -4,16 +4,15 @@ import time
 import os
 from binascii import hexlify
 import hashlib
-
+import click
 # note: initialization vector does not need to be secret
 
-def upload_file(filepath):
+def upload_file(filepath, password):
 	"""
 	Uploads a file to a local repo.
 
 	# TODO: add to the giant ledger
 	"""
-	password = input('Enter password: ')
 	key = hashlib.sha256(password.encode()).digest()
 	filename = os.path.basename(filepath)
 	block_num = 0
