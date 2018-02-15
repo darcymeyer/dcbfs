@@ -18,4 +18,4 @@ BLOCKSIZE = 512 # will be much larger after testing phase
 
 
 ######### Load global variables
-file_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)
+personal_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)

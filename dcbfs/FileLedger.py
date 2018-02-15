@@ -1,4 +1,6 @@
+import os
 import json
+from dcbfs.util import _init
 
 class PersonalFileLedger():
 	'''
@@ -6,17 +8,23 @@ class PersonalFileLedger():
 	'''
 	def __init__(self, DCBFS_MAIN_DIR):
 		self.fp = DCBFS_MAIN_DIR+"personal_ledger"
+		if not os.path.exists(self.fp):
+		    _init()
 		self.read()
+
 
 	def list_files(self):
 		return list(self.ledger.keys())
 
-	def add(self, filename, num_blocks):
+	def get_id(self, fname):
+		return self.ledger[fname]
+
+	def add(self, filename, num_blocks, fn):
 		'''
 		Add a filename to the personal ledger
 		'''
 		assert type(filename) is str, 'Filename must be a string'
-		self.ledger[filename] = str(num_blocks)
+		self.ledger[filename] = (str(num_blocks), fn)
 
 	def remove(self, filename):
 		'''

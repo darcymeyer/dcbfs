@@ -104,9 +104,9 @@ def get_num_blocks(filename):
 		return int(num)
 
 def human_readable(timestamp):
-    epoch = int.from_bytes(timestamp, byteorder='big')
-    hr = datetime.fromtimestamp(epoch)
-    return hr.strftime('%Y-%m-%d %H:%M:%S')
+	epoch = int.from_bytes(timestamp, byteorder='big')
+	hr = datetime.fromtimestamp(epoch)
+	return hr.strftime('%Y-%m-%d %H:%M:%S')
 
 def _explore():
 	'''
@@ -115,4 +115,61 @@ def _explore():
 	print('FILES')
 	NUM_DASHES = 10
 	print(''.join(['-' for x in range(NUM_DASHES)]))
-	print('\n'.join(file_ledger.list_files()))
+	print('\n'.join(personal_ledger.list_files()))
+
+
+def _examine_block(f):
+	block_id = personal_ledger.get_id(f)
+	try:
+		if block_id == 'q':
+			print("quitting")
+			return
+		with open(STORAGE_DIR+block_id, 'rb') as f:
+			id_hash = f.read(64)
+			timestamp = f.read(4)
+			iv = f.read(16)
+			md5_hash = f.read(16)
+			content = f.read(BLOCKSIZE)
+	except Exception as e:
+		print("couldn't find block:", e)
+		return
+	block_examination_help_text()
+	print('enter field number to examine:')
+	while True:
+		action = input('> ')
+		if action == '1':
+			print("id_hash:", id_hash)
+		elif action == '2':
+			print("timestamp:", timestamp, "=", human_readable(timestamp))
+		elif action == '3':
+			print("initialization vector:", iv)
+		elif action == '4':
+			print("md5 hash:", md5_hash)
+		elif action == '5':
+			print("content:", content)
+		elif action == 'h' or action == 'help':
+			block_examination_help_text()
+		elif action == 'q':
+			print("quitting")
+			return
+		else:
+			print("invalid input")
+
+
+def _init():
+	'''
+	Initializes block on system
+
+	1) Creates storage directory
+	2) Creates personal personal ledger
+		a) If it exists, it leaves it (To-Do: Check if syntax correct.)
+		b) If it doesn't, create it with an empty dictionary.
+	'''
+	root = os.path.expanduser("~")+'/.dcbfs/'
+	strg_dir = root+'storage'
+	if not os.path.exists(strg_dir):
+		os.makedirs(strg_dir)
+	if not os.path.exists(root+'personal_ledger'):
+		f = open(root+'personal_ledger', 'a')
+		f.write('{}')
+		f.close()
