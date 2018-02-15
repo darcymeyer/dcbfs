@@ -7,6 +7,20 @@ from binascii import hexlify
 import re
 import json
 import pdb
+from datetime import datetime
+
+def block_examination_help_text():
+	'''
+	Prints help text for block examination.
+	'''
+	print('''fields
+			------
+			1-id_hash(64)
+			2-timestamp(4)
+			3-iv(16)
+			4-md5_hash(16)
+			5-content''')
+	print('h for help or q for quit')
 
 def hash_data(data):
 	'''
@@ -173,3 +187,4 @@ def _init():
 		f = open(root+'personal_ledger', 'a')
 		f.write('{}')
 		f.close()
+	personal_ledger.read()

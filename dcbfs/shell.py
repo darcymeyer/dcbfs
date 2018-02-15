@@ -3,23 +3,9 @@ from .encryptor import *
 from .util import human_readable, _explore, _examine_block, _init
 import os
 import click
-from datetime import datetime
 import pprint
 
 cli = click.Group()
-def block_examination_help_text():
-	'''
-	Prints help text for block examination.
-	'''
-	print('''fields
-			------
-			1-id_hash(64)
-			2-timestamp(4)
-			3-iv(16)
-			4-md5_hash(16)
-			5-content''')
-	print('h for help or q for quit')
-
 
 @cli.command(name='examine')
 @click.option(u'--file', '-f','f', type=str, required=True, prompt=True)

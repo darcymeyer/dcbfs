@@ -1,6 +1,6 @@
 import os
 import json
-from dcbfs.util import _init
+import pdb
 
 class PersonalFileLedger():
 	'''
@@ -8,16 +8,26 @@ class PersonalFileLedger():
 	'''
 	def __init__(self, DCBFS_MAIN_DIR):
 		self.fp = DCBFS_MAIN_DIR+"personal_ledger"
-		if not os.path.exists(self.fp):
-		    _init()
-		self.read()
+		if os.path.exists(self.fp):
+			self.read()
+		else:
+			print('WARNING! Personal ledger doesn\'t exist! Try running `dcbfs init`.')
 
 
 	def list_files(self):
 		return list(self.ledger.keys())
 
 	def get_id(self, fname):
-		return self.ledger[fname]
+		'''
+		Gets the storage id
+		'''
+		return self.ledger[fname][1]
+
+	def get_block(self, fname):
+		'''
+		Gets the block id
+		'''
+		return self.ledger[fname][0]
 
 	def add(self, filename, num_blocks, fn):
 		'''
@@ -25,6 +35,7 @@ class PersonalFileLedger():
 		'''
 		assert type(filename) is str, 'Filename must be a string'
 		self.ledger[filename] = (str(num_blocks), fn)
+		self.write()
 
 	def remove(self, filename):
 		'''
@@ -32,6 +43,7 @@ class PersonalFileLedger():
 		'''
 		assert type(filename) is str, 'Filename must be a string'
 		del self.ledger[filename]
+		self.write()
 
 	def read(self):
 		'''
