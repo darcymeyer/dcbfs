@@ -21,13 +21,19 @@ class PersonalFileLedger():
 		'''
 		Gets the storage id
 		'''
-		return self.ledger[fname][1]
+		try:
+			return self.ledger[fname][1]
+		except:
+			raise ValueError("File: " + str(fname)+" does not exist!!!")
 
 	def get_block(self, fname):
 		'''
 		Gets the block id
 		'''
-		return self.ledger[fname][0]
+		try:
+			return self.ledger[fname][0]
+		except:
+			raise ValueError("File: " + str(fname)+" does not exist!!!")
 
 	def add(self, filename, num_blocks, fn):
 		'''
