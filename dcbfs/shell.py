@@ -1,8 +1,10 @@
 from .settings import *
 from .encryptor import *
+from .util import human_readable, _explore
 import os
 import click
 from datetime import datetime
+import pprint
 
 cli = click.Group()
 def block_examination_help_text():
@@ -17,12 +19,6 @@ def block_examination_help_text():
             4-md5_hash(16)
             5-content''')
     print('h for help or q for quit')
-
-
-def human_readable(timestamp):
-    epoch = int.from_bytes(timestamp, byteorder='big')
-    hr = datetime.fromtimestamp(epoch)
-    return hr.strftime('%Y-%m-%d %H:%M:%S')
 
 
 @cli.command(name='examine')
@@ -76,15 +72,39 @@ def upload(f, password):
     upload_file(f, password)
 
 @cli.command()
+@click.option(u'--file', '-f','f', type=str, required=True)
+def delete(f, password):
+    '''
+    Interface for uploading files
+    '''
+    delete_file(f)
+
+@cli.command()
+def explore():
+    '''
+    Interface for uploading files
+    '''
+    _explore()
+
+@cli.command()
 def init():
     '''
     Initializes block on system
+
+    1) Creates storage directory
+    2) Creates personal personal ledger
+        a) If it exists, it leaves it (To-Do: Check if syntax correct.)
+        b) If it doesn't, create it with an empty dictionary.
     '''
     root = os.path.expanduser("~")+'/.dcbfs/'
     strg_dir = root+'storage'
     if not os.path.exists(strg_dir):
         os.makedirs(strg_dir)
-    open(root+'personal_ledger', 'a').close()
+        
+    if not os.path.exists(root+'personal_ledger'):
+        f = open(root+'personal_ledger', 'a')
+        f.write('{}')
+        f.close()
 
 def main():
     '''Used for entry point'''

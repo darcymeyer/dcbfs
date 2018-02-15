@@ -1,6 +1,7 @@
 # settings for where to store and access files
 
 import os
+from .FileLedger import PersonalFileLedger
 
 # Directory settings
 DCBFS_MAIN_DIR = os.path.expanduser('~/.dcbfs/')
@@ -13,3 +14,8 @@ GIANT_LEDGER_FILE = DCBFS_MAIN_DIR + 'giant_ledger'
 
 # BLOCKSIZE must be a multiple of 16, and its unit is bytes
 BLOCKSIZE = 512 # will be much larger after testing phase
+
+
+
+######### Load global variables
+file_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)

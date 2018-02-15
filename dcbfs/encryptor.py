@@ -19,10 +19,12 @@ def upload_file(filepath, password):
 	for content in generate_block_content(filepath):
 		block = make_block(filename, content, block_num, key)
 		with open(STORAGE_DIR + hexlify(block[:64]).decode('utf-8'), 'wb') as f:
-		# i question whether this is too long of a filename
+			# i question whether this is too long of a filename
+			# i question whether making the filename part of the data is necessary.
+			# Also. If it has the same name, but different data, this fails.
 			f.write(block)
 		block_num += 1
-	access_file_ledger('add', filename, block_num)
+	file_ledger.add(filename, block_num)
 
 def recreate_file(filename):
 	num_blocks = get_num_blocks(filename)
@@ -40,5 +42,5 @@ def recreate_file(filename):
 	# access_file_ledger('remove', filename, block_num)
 
 def delete_file(filename):
-	access_file_ledger('remove', filename, block_num)
+	file_ledger.remove(filename, block_num)
 	# TODO: release revocation statements

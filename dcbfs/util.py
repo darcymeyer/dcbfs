@@ -5,13 +5,21 @@ import os
 from time import time
 from binascii import hexlify
 import re
+import json
+import pdb
 
 def hash_data(data):
+	'''
+	Hash data with SHA512
+	'''
 	h = SHA512.new() # hashing algorithm subject to change
 	h.update(data.encode('utf-8'))
 	return h.digest()
 
 def checksum(data, c=None):
+	'''
+	Checksum with md5
+	'''
 	h = MD5.new()
 	try:
 		h.update(data.encode('utf-8'))
@@ -52,17 +60,6 @@ def assemble_content(out_file, *args):
 			with open(blockfile, 'r') as bf:
 				of.write(bf.read())
 			os.remove(blockfile)
-
-def access_file_ledger(action, filename, num_blocks):
-	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f: # don't hardcode this
-		ledger = f.read()
-	with open(DCBFS_MAIN_DIR+"personal_ledger", 'w') as f:
-		if action=='add':
-			ledger += filename+' : '+str(num_blocks)+'\n'
-			f.write(ledger)
-		elif action=='remove':
-			ledger = re.sub(filename+' : '+str(num_blocks)+'\n', '', ledger)
-			f.write(ledger)
 
 def timestamp():
 	t = int(time())
@@ -105,3 +102,17 @@ def get_num_blocks(filename):
 		ledger = f.read()
 		num = re.match('(?:'+filename+' : )([0-9]+)', ledger).group(1)
 		return int(num)
+
+def human_readable(timestamp):
+    epoch = int.from_bytes(timestamp, byteorder='big')
+    hr = datetime.fromtimestamp(epoch)
+    return hr.strftime('%Y-%m-%d %H:%M:%S')
+
+def _explore():
+	'''
+	Explores the uploaded files
+	'''
+	print('FILES')
+	NUM_DASHES = 10
+	print(''.join(['-' for x in range(NUM_DASHES)]))
+	print('\n'.join(file_ledger.list_files()))
