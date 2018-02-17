@@ -1,0 +1,4 @@
+#!/usr/bin/env python
+
+# do the managing here
+print "test"
