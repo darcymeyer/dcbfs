@@ -4,6 +4,11 @@ A way to encrypt and upload files to multiple servers.
 
 This document outlines the structure and philosophy of the project. If you're interested in contributing, please read the [contributing guidelines](https://github.com/darcymeyer/dcbfs/blob/master/CONTRIBUTING.md) and [code of conduct](https://github.com/darcymeyer/dcbfs/blob/master/CODE_OF_CONDUCT.md).
 
+## Install
+
+To install dcbfs to `/usr/local/bin/` use the line below.
+`python setup.py install --install-scripts=/usr/local/bin`
+
 ## Encryption
 
 AES, CBC. (If someone wants to argue for different encryption, please do.)
@@ -16,7 +21,7 @@ Each entry contains id, location, timestamp of each block; and revocation statem
 
 ### Personal Ledger
 
-Contains the information necessary (filename, amount of blocks, derived key; derived key is hash of filename and key) to retrieve blocks that form the original file, their order, and the keys with which to decrypt them. Its own id is a hash of the filename and the publisher name.
+Contains the information necessary (filename, number of blocks, derived key; derived key is hash of filename and key) to retrieve blocks that form the original file, their order, and the keys with which to decrypt them. Its own id is a hash of the filename and the publisher name.
 
 ### Personal Ledger
 
@@ -42,3 +47,5 @@ Each block has padding added to it so they are all the same size. They will have
 
 uses FTP (chosen for anonymous logins)
 
+## Notes
+	- Uses Python3
