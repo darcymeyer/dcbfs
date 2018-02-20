@@ -1,5 +1,13 @@
 # Changelog
 
+*Feb 20:* 
+
+*Feb 19:* nevermind we're using https. set up remote web servers
+
+<!-- *Feb 16:*  -->
+
+*Feb 15:* update contributing and readme
+
 *Feb 6:* research into FTP
 
 *Feb 2:* choose FTP as transfer protocol
