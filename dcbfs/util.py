@@ -1,17 +1,39 @@
 from Crypto.Hash import SHA512, MD5
 from Crypto.Cipher import AES
-from settings import *
+from .settings import *
 import os
 from time import time
 from binascii import hexlify
 import re
+import json
+import pdb
+from datetime import datetime
+
+def block_examination_help_text():
+	'''
+	Prints help text for block examination.
+	'''
+	print('''fields
+			------
+			1-id_hash(64)
+			2-timestamp(4)
+			3-iv(16)
+			4-md5_hash(16)
+			5-content''')
+	print('h for help or q for quit')
 
 def hash_data(data):
+	'''
+	Hash data with SHA512
+	'''
 	h = SHA512.new() # hashing algorithm subject to change
 	h.update(data.encode('utf-8'))
 	return h.digest()
 
 def checksum(data, c=None):
+	'''
+	Checksum with md5
+	'''
 	h = MD5.new()
 	try:
 		h.update(data.encode('utf-8'))
@@ -52,17 +74,6 @@ def assemble_content(out_file, *args):
 			with open(blockfile, 'r') as bf:
 				of.write(bf.read())
 			os.remove(blockfile)
-
-def access_file_ledger(action, filename, num_blocks):
-	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f: # don't hardcode this
-		ledger = f.read()
-	with open(DCBFS_MAIN_DIR+"personal_ledger", 'w') as f:
-		if action=='add':
-			ledger += filename+' : '+str(num_blocks)+'\n'
-			f.write(ledger)
-		elif action=='remove':
-			ledger = re.sub(filename+' : '+str(num_blocks)+'\n', '', ledger)
-			f.write(ledger)
 
 def timestamp():
 	t = int(time())
@@ -105,3 +116,75 @@ def get_num_blocks(filename):
 		ledger = f.read()
 		num = re.match('(?:'+filename+' : )([0-9]+)', ledger).group(1)
 		return int(num)
+
+def human_readable(timestamp):
+	epoch = int.from_bytes(timestamp, byteorder='big')
+	hr = datetime.fromtimestamp(epoch)
+	return hr.strftime('%Y-%m-%d %H:%M:%S')
+
+def _explore():
+	'''
+	Explores the uploaded files
+	'''
+	print('FILES')
+	NUM_DASHES = 10
+	print(''.join(['-' for x in range(NUM_DASHES)]))
+	print('\n'.join(personal_ledger.list_files()))
+
+
+def _examine_block(f):
+	block_id = personal_ledger.get_id(f)
+	try:
+		if block_id == 'q':
+			print("quitting")
+			return
+		with open(STORAGE_DIR+block_id, 'rb') as f:
+			id_hash = f.read(64)
+			timestamp = f.read(4)
+			iv = f.read(16)
+			md5_hash = f.read(16)
+			content = f.read(BLOCKSIZE)
+	except Exception as e:
+		print("couldn't find block:", e)
+		return
+	block_examination_help_text()
+	print('enter field number to examine:')
+	while True:
+		action = input('> ')
+		if action == '1':
+			print("id_hash:", id_hash)
+		elif action == '2':
+			print("timestamp:", timestamp, "=", human_readable(timestamp))
+		elif action == '3':
+			print("initialization vector:", iv)
+		elif action == '4':
+			print("md5 hash:", md5_hash)
+		elif action == '5':
+			print("content:", content)
+		elif action == 'h' or action == 'help':
+			block_examination_help_text()
+		elif action == 'q':
+			print("quitting")
+			return
+		else:
+			print("invalid input")
+
+
+def _init():
+	'''
+	Initializes block on system
+
+	1) Creates storage directory
+	2) Creates personal personal ledger
+		a) If it exists, it leaves it (To-Do: Check if syntax correct.)
+		b) If it doesn't, create it with an empty dictionary.
+	'''
+	root = os.path.expanduser("~")+'/.dcbfs/'
+	strg_dir = root+'storage'
+	if not os.path.exists(strg_dir):
+		os.makedirs(strg_dir)
+	if not os.path.exists(root+'personal_ledger'):
+		f = open(root+'personal_ledger', 'a')
+		f.write('{}')
+		f.close()
+	personal_ledger.read()

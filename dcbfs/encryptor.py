@@ -1,28 +1,38 @@
-from settings import *
-from util import *
+from .settings import *
+from .util import *
 import time
 import os
 from binascii import hexlify
-
+import hashlib
+import click
 # note: initialization vector does not need to be secret
 
-def upload_file(filepath):
-	key = input('enter key:')
+def upload_file(filepath, password):
+	"""
+	Uploads a file to a local repo.
+
+	# TODO: add to the giant ledger
+	"""
+	key = hashlib.sha256(password.encode()).digest()
 	filename = os.path.basename(filepath)
 	block_num = 0
+	fn = None
 	for content in generate_block_content(filepath):
 		block = make_block(filename, content, block_num, key)
-		with open(STORAGE_DIR + hexlify(block[:64]).decode('utf-8'), 'wb') as f:
-		# i question whether this is too long of a filename
+		fn = hexlify(block[:64]).decode('utf-8')
+		with open(STORAGE_DIR + fn, 'wb') as f:
+			# i question whether this is too long of a filename
+			# i question whether making the filename part of the data is necessary.
+			# Also. If it has the same name, but different data, this fails.
 			f.write(block)
 		block_num += 1
-	access_file_ledger('add', filename, block_num)
-	# TODO: add to the giant ledger
+	personal_ledger.add(filename, block_num, fn)
 
 def recreate_file(filename):
 	num_blocks = get_num_blocks(filename)
 	with open(OUT_DIR + filename, 'ab+') as f:
-		key = input('enter key:')
+		password = input('Enter password: ')
+		key = hashlib.sha256(password.encode()).digest()
 		block_num = 0
 		while block_num < num_blocks:
 			id_hash = hash_data(filename+"/"+str(block_num))
@@ -34,5 +44,5 @@ def recreate_file(filename):
 	# access_file_ledger('remove', filename, block_num)
 
 def delete_file(filename):
-	access_file_ledger('remove', filename, block_num)
+	personal_ledger.remove(filename, block_num)
 	# TODO: release revocation statements
