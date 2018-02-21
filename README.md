@@ -45,7 +45,7 @@ Each block has padding added to it so they are all the same size. They will have
 
 ## Communication
 
-uses FTP (chosen for anonymous logins)
+uses HTTPS (chosen for anonymous file transfer and ease of setup)
 
 ## Notes
 	- Uses Python3
