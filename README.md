@@ -1,6 +1,6 @@
 # Decentralized Cloud-Based File Storage
 
-A way to encrypt and upload files to multiple servers.
+A way to encrypt and upload files to multiple servers. **This project is still in development and not ready for deployment.**
 
 This document outlines the structure and philosophy of the project. If you're interested in contributing, please read the [contributing guidelines](https://github.com/darcymeyer/dcbfs/blob/master/CONTRIBUTING.md) and [code of conduct](https://github.com/darcymeyer/dcbfs/blob/master/CODE_OF_CONDUCT.md).
 
