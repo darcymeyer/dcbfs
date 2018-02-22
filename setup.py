@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name='dcbfs',
       version='1.0',
-      description='Distributed File System',
+      description='Distributed Cloud Based File System',
       author='Darcy Meyer',
       author_email='dmeyer@andover.edu',
       url='darcymeyer.github.io',
