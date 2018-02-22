@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='dcbfs',
-      version='1.0',
+      version='0.1',
       description='Distributed Cloud Based File System',
       author='Darcy Meyer',
       author_email='dmeyer@andover.edu',
