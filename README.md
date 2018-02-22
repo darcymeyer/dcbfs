@@ -11,7 +11,7 @@ To install dcbfs to `/usr/local/bin/` use the line below.
 
 ## Encryption
 
-AES, CBC. (If someone wants to argue for different encryption, please do.)
+AES, CBC. (If you want to argue for different encryption, please open an issue.)
 
 ## Ledgers
 
@@ -19,13 +19,13 @@ AES, CBC. (If someone wants to argue for different encryption, please do.)
 
 Each entry contains id, location, timestamp of each block; and revocation statements.
 
-### Personal Ledger
-
-Contains the information necessary (filename, number of blocks, derived key; derived key is hash of filename and key) to retrieve blocks that form the original file, their order, and the keys with which to decrypt them. Its own id is a hash of the filename and the publisher name.
+(Not currently implemented)
 
 ### Personal Ledger
 
-Each publisher has one personal ledger. Its id is a hash of the publisher's secret, and is encrypted with that secret. It is padded to the standard block size. Every time a publisher uploads a file, their personal ledger block is revoked and a new one is added to the giant ledger (blocks don't do updates; they are only created or deleted).
+Each publisher has one personal ledger. Its id is a hash of the publisher's secret, and is encrypted with that secret. It is padded to the standard block size. Every time a publisher uploads a file, their personal ledger block is revoked and a new one is added to the giant ledger (blocks don't do updates; they are only created or deleted). They are either timestamped or the id hash is salted with a nonce (still deciding).
+
+Contains the information necessary (filename, number of blocks, derived key; derived key is hash of filename and key) to retrieve, decrypt, and assemble the blocks that form each original file.
 
 ## Individual Blocks
 
@@ -45,7 +45,8 @@ Each block has padding added to it so they are all the same size. They will have
 
 ## Communication
 
-uses HTTPS (chosen for anonymous file transfer and ease of setup)
+Uses HTTPS (chosen for anonymous file transfer and ease of setup)
 
 ## Notes
-	- Uses Python3
+
+Uses python 2
