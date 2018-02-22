@@ -1,6 +1,6 @@
-from .settings import *
-from .encryptor import *
-from .util import human_readable, _explore, _examine_block, _init
+from settings import *
+from encryptor import *
+from util import human_readable, _explore, _examine_block, _init
 import os
 import click
 import pprint
@@ -25,10 +25,20 @@ def upload(f, password):
 	upload_file(f, password)
 
 @cli.command()
+@click.option(u'--file', '-f', 'f', type=str, required=True)
+@click.option(u'--passwd', '-p', 'password', type=str, required=True, prompt=True)
+def retrieve(f, password):
+	'''
+	Interface for retrieving files
+	(Does not delete the files)
+	'''
+	recreate_file(f, password)
+
+@cli.command()
 @click.option(u'--file', '-f','f', type=str, required=True)
 def delete(f, password):
 	'''
-	Interface for uploading files
+	Interface for deleting files
 	'''
 	delete_file(f)
 
@@ -41,6 +51,9 @@ def explore():
 
 @cli.command()
 def init():
+	'''
+	Initializes dcbfs, if not already initialized
+	'''
 	_init()
 
 def main():

@@ -1,5 +1,5 @@
-from .settings import *
-from .util import *
+from settings import *
+from util import *
 import time
 import os
 from binascii import hexlify
@@ -14,7 +14,9 @@ def upload_file(filepath, password):
 	# TODO: add to the giant ledger
 	"""
 	key = hashlib.sha256(password.encode()).digest()
-	filename = os.path.basename(filepath)
+	filename = os.path.basename(filepath).encode("ascii", "ignore")
+	# print "filename: "+filename
+	# print type(filename)
 	block_num = 0
 	fn = None
 	for content in generate_block_content(filepath):
@@ -28,10 +30,10 @@ def upload_file(filepath, password):
 		block_num += 1
 	personal_ledger.add(filename, block_num, fn)
 
-def recreate_file(filename):
+def recreate_file(filename, pw):
 	num_blocks = get_num_blocks(filename)
 	with open(OUT_DIR + filename, 'ab+') as f:
-		password = input('Enter password: ')
+		password = pw#raw_input('Enter password: ')
 		key = hashlib.sha256(password.encode()).digest()
 		block_num = 0
 		while block_num < num_blocks:

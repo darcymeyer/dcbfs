@@ -1,13 +1,14 @@
 import os
 import json
 import pdb
+from settings import *
 
 class PersonalFileLedger():
 	'''
 	Represents the file ledger in memory
 	'''
-	def __init__(self, DCBFS_MAIN_DIR):
-		self.fp = DCBFS_MAIN_DIR+"personal_ledger"
+	def __init__(self, md):#, DCBFS_MAIN_DIR):
+		self.fp = md+"personal_ledger"
 		if os.path.exists(self.fp):
 			self.read()
 		else:

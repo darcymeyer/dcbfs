@@ -1,7 +1,7 @@
 # settings for where to store and access files
 
 import os
-from .FileLedger import PersonalFileLedger
+from FileLedger import PersonalFileLedger
 
 # Directory settings
 DCBFS_MAIN_DIR = os.path.expanduser('~/.dcbfs/')

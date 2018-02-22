@@ -1,6 +1,6 @@
 from Crypto.Hash import SHA512, MD5
 from Crypto.Cipher import AES
-from .settings import *
+from settings import *
 import os
 from time import time
 from binascii import hexlify
@@ -10,9 +10,7 @@ import pdb
 from datetime import datetime
 
 def block_examination_help_text():
-	'''
-	Prints help text for block examination.
-	'''
+	'''Prints help text for block examination.'''
 	print('''fields
 			------
 			1-id_hash(64)
@@ -23,17 +21,13 @@ def block_examination_help_text():
 	print('h for help or q for quit')
 
 def hash_data(data):
-	'''
-	Hash data with SHA512
-	'''
+	'''Hash data with SHA512'''
 	h = SHA512.new() # hashing algorithm subject to change
 	h.update(data.encode('utf-8'))
 	return h.digest()
 
 def checksum(data, c=None):
-	'''
-	Checksum with md5
-	'''
+	'''Checksum with md5'''
 	h = MD5.new()
 	try:
 		h.update(data.encode('utf-8'))
@@ -44,19 +38,21 @@ def checksum(data, c=None):
 	return h.digest()
 
 def encrypt_content(data, key, iv):
+	'''Encrypt a pre-padded block of data, return it as is'''
 	# `data` is already padded
 	encryptor = AES.new(key, AES.MODE_CBC, iv)
 	encrypted = encryptor.encrypt(data)
 	return encrypted
 
 def decrypt_content(data, key, iv):
-	# `data` does not contain the header
+	'''Decrypt an encrypted block of data. Do not remove padding.
+	   `data` does not contain a header.'''
 	decryptor = AES.new(key, AES.MODE_CBC, iv)
 	decrypted = decryptor.decrypt(data)
 	return decrypted
 
 def generate_block_content(filepath, blocksize=BLOCKSIZE):
-	# just reads out the file and chunks it
+	'''Return the file's bytes in chunks in a generator'''
 	padding_length = 0
 	with open(filepath, 'rb') as f:
 		while padding_length==0:
@@ -88,10 +84,11 @@ def timestamp():
 	return b
 
 def make_block(filename, content, block_num, key):
+	'''Take some data, encrypt it, add a header.'''
 	id_hash = hash_data(filename +"/"+ str(block_num))
 	iv = os.urandom(16)
 	block_content = encrypt_content(content, key, iv)
-	md5 = checksum(block_content) # leave this line alone!
+	md5 = checksum(block_content)
 	block = id_hash + timestamp() + iv + md5 + block_content
 	return block
 
@@ -113,8 +110,9 @@ def get_remote_block(id_hash):
 
 def get_num_blocks(filename):
 	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f:
-		ledger = f.read()
-		num = re.match('(?:'+filename+' : )([0-9]+)', ledger).group(1)
+		# ledger = f.read()
+		# num = re.match('(?:'+filename+' : )([0-9]+)', ledger).group(1)
+		num = personal_ledger.ledger[filename][0]
 		return int(num)
 
 def human_readable(timestamp):
@@ -133,6 +131,7 @@ def _explore():
 
 
 def _examine_block(f):
+	'''A shell function to view aspects of a block'''
 	block_id = personal_ledger.get_id(f)
 	try:
 		if block_id == 'q':
