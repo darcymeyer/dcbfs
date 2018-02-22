@@ -1,22 +1,25 @@
 from settings import *
+from FileLedger import PersonalFileLedger
 from util import *
 import time
 import os
 from binascii import hexlify
 import hashlib
 import click
+
 # note: initialization vector does not need to be secret
 
+personal_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)
+
 def upload_file(filepath, password):
-	"""
-	Uploads a file to a local repo.
+	'''
+	Upload a file.
+	Currently only works with a local repo.
 
 	# TODO: add to the giant ledger
-	"""
-	key = hashlib.sha256(password.encode()).digest()
+	'''
+	key = hashlib.sha256(password.encode()).digest() # length 32
 	filename = os.path.basename(filepath).encode("ascii", "ignore")
-	# print "filename: "+filename
-	# print type(filename)
 	block_num = 0
 	fn = None
 	for content in generate_block_content(filepath):
@@ -31,6 +34,10 @@ def upload_file(filepath, password):
 	personal_ledger.add(filename, block_num, fn)
 
 def recreate_file(filename, pw):
+	'''
+	Retrieve a file.
+	Currently only works with local repo.
+	'''
 	num_blocks = get_num_blocks(filename)
 	with open(OUT_DIR + filename, 'ab+') as f:
 		password = pw#raw_input('Enter password: ')
@@ -43,8 +50,11 @@ def recreate_file(filename, pw):
 			content = disassemble_block(block, block_num, key)
 			f.write(content)
 			block_num += 1
-	# access_file_ledger('remove', filename, block_num)
 
 def delete_file(filename):
+	'''
+	Delete a file.
+	Currently only works with local repo.
+	'''
 	personal_ledger.remove(filename, block_num)
 	# TODO: release revocation statements

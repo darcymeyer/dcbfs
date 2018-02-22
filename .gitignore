@@ -3,3 +3,6 @@ __pycache__/*
 *.pyc
 thoughts.md
 venv/*
+build/*
+dcbfs.egg-info/*
+dist/*

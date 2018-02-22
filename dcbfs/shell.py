@@ -1,5 +1,6 @@
 from settings import *
 from encryptor import *
+from FileLedger import *
 from util import human_readable, _explore, _examine_block, _init
 import os
 import click
@@ -45,14 +46,14 @@ def delete(f, password):
 @cli.command()
 def explore():
 	'''
-	Interface for uploading files
+	Show uploaded files
 	'''
 	_explore()
 
 @cli.command()
 def init():
 	'''
-	Initializes dcbfs, if not already initialized
+	Initialize dcbfs, if not already initialized
 	'''
 	_init()
 

@@ -8,9 +8,12 @@ import re
 import json
 import pdb
 from datetime import datetime
+import struct
 
 def block_examination_help_text():
-	'''Prints help text for block examination.'''
+	'''
+	Prints help text for block examination.
+	'''
 	print('''fields
 			------
 			1-id_hash(64)
@@ -21,13 +24,17 @@ def block_examination_help_text():
 	print('h for help or q for quit')
 
 def hash_data(data):
-	'''Hash data with SHA512'''
+	'''
+	Hash data with SHA512
+	'''
 	h = SHA512.new() # hashing algorithm subject to change
 	h.update(data.encode('utf-8'))
 	return h.digest()
 
 def checksum(data, c=None):
-	'''Checksum with md5'''
+	'''
+	Checksum with md5
+	'''
 	h = MD5.new()
 	try:
 		h.update(data.encode('utf-8'))
@@ -38,21 +45,26 @@ def checksum(data, c=None):
 	return h.digest()
 
 def encrypt_content(data, key, iv):
-	'''Encrypt a pre-padded block of data, return it as is'''
-	# `data` is already padded
+	'''
+	Encrypt a pre-padded block of data, return it as is
+	'''
 	encryptor = AES.new(key, AES.MODE_CBC, iv)
 	encrypted = encryptor.encrypt(data)
 	return encrypted
 
 def decrypt_content(data, key, iv):
-	'''Decrypt an encrypted block of data. Do not remove padding.
-	   `data` does not contain a header.'''
+	'''
+	Decrypt an encrypted block of data. Do not remove padding.
+	`data` does not contain a header.
+	'''
 	decryptor = AES.new(key, AES.MODE_CBC, iv)
 	decrypted = decryptor.decrypt(data)
 	return decrypted
 
 def generate_block_content(filepath, blocksize=BLOCKSIZE):
-	'''Return the file's bytes in chunks in a generator'''
+	'''
+	Return the file's bytes in chunks in a generator
+	'''
 	padding_length = 0
 	with open(filepath, 'rb') as f:
 		while padding_length==0:
@@ -61,15 +73,6 @@ def generate_block_content(filepath, blocksize=BLOCKSIZE):
 			block = content_slice + padding_length*b'\x00'
 			# should really add a note within the block content of how many null bytes were added
 			yield block
-
-def assemble_content(out_file, *args):
-	# `outfile` is a filename string
-	# `args` should be all the filenames of the individual blocks, in order
-	with open(out_file, 'w') as of:
-		for blockfile in args:
-			with open(blockfile, 'r') as bf:
-				of.write(bf.read())
-			os.remove(blockfile)
 
 def timestamp():
 	t = int(time())
@@ -84,7 +87,9 @@ def timestamp():
 	return b
 
 def make_block(filename, content, block_num, key):
-	'''Take some data, encrypt it, add a header.'''
+	'''
+	Take some data, encrypt it, add a header
+	'''
 	id_hash = hash_data(filename +"/"+ str(block_num))
 	iv = os.urandom(16)
 	block_content = encrypt_content(content, key, iv)
@@ -93,6 +98,9 @@ def make_block(filename, content, block_num, key):
 	return block
 
 def disassemble_block(block, block_num, key):
+	'''
+	Given a block, get its decrypted content
+	'''
 	# `block_num` is not currently used (?)
 	iv = block[68:68+16]
 	encrypted = block[100:]
@@ -101,6 +109,9 @@ def disassemble_block(block, block_num, key):
 	return decrypted
 
 def get_remote_block(id_hash):
+	'''
+	Grab a single block, specified by `id_hash`
+	'''
 	#eventually this will query the giant ledger and grab the block from a remote machine
 	# it should also check with the md5 checksum
 	blockname = hexlify(id_hash).decode('utf-8')
@@ -109,20 +120,25 @@ def get_remote_block(id_hash):
 		return block
 
 def get_num_blocks(filename):
+	'''
+	Number of blocks over which file is stored
+	'''
 	with open(DCBFS_MAIN_DIR+"personal_ledger", 'r') as f:
-		# ledger = f.read()
-		# num = re.match('(?:'+filename+' : )([0-9]+)', ledger).group(1)
 		num = personal_ledger.ledger[filename][0]
 		return int(num)
 
 def human_readable(timestamp):
-	epoch = int.from_bytes(timestamp, byteorder='big')
+	'''
+	Convert the bytes of the timesamp into human-readable string
+	'''
+	# epoch = int.from_bytes(timestamp, byteorder='big')
+	epoch = struct.unpack(">i", timestamp)[0]
 	hr = datetime.fromtimestamp(epoch)
 	return hr.strftime('%Y-%m-%d %H:%M:%S')
 
 def _explore():
 	'''
-	Explores the uploaded files
+	Display the uploaded files
 	'''
 	print('FILES')
 	NUM_DASHES = 10
@@ -131,11 +147,13 @@ def _explore():
 
 
 def _examine_block(f):
-	'''A shell function to view aspects of a block'''
+	'''
+	A shell function to view aspects of a block
+	'''
 	block_id = personal_ledger.get_id(f)
 	try:
 		if block_id == 'q':
-			print("quitting")
+			print "quitting"
 			return
 		with open(STORAGE_DIR+block_id, 'rb') as f:
 			id_hash = f.read(64)
@@ -144,30 +162,29 @@ def _examine_block(f):
 			md5_hash = f.read(16)
 			content = f.read(BLOCKSIZE)
 	except Exception as e:
-		print("couldn't find block:", e)
+		print "couldn't find block:", e
 		return
 	block_examination_help_text()
-	print('enter field number to examine:')
+	print 'enter field number to examine:'
 	while True:
-		action = input('> ')
+		action = raw_input('> ')
 		if action == '1':
-			print("id_hash:", id_hash)
+			print"id_hash:", id_hash
 		elif action == '2':
-			print("timestamp:", timestamp, "=", human_readable(timestamp))
+			print "timestamp:", human_readable(timestamp)
 		elif action == '3':
-			print("initialization vector:", iv)
+			print "initialization vector:", iv
 		elif action == '4':
-			print("md5 hash:", md5_hash)
+			print "md5 hash:", md5_hash
 		elif action == '5':
-			print("content:", content)
+			print "content:", content
 		elif action == 'h' or action == 'help':
 			block_examination_help_text()
 		elif action == 'q':
-			print("quitting")
+			print "quitting"
 			return
 		else:
-			print("invalid input")
-
+			print "invalid input"
 
 def _init():
 	'''
