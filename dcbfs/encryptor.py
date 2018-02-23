@@ -1,5 +1,7 @@
 from settings import *
 from file_ledger import PersonalFileLedger, GiantFileLedger
+personal_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)
+giant_ledger = GiantFileLedger(DCBFS_MAIN_DIR, known_hosts=KNOWN_HOSTS)
 from util import *
 import time
 import os
@@ -8,9 +10,6 @@ import hashlib
 import click
 
 # note: initialization vector does not need to be secret
-
-personal_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)
-giant_ledger = GiantFileLedger(DCBFS_MAIN_DIR, known_hosts=KNOWN_HOSTS)
 
 def upload_file(filepath, password):
 	'''
