@@ -115,7 +115,7 @@ class GiantFileLedger():
 	def add_location(self, blockname, location):
 		self.ledger[blockname]['locations'].append(
 			{'location':location, 'timestamp':timestamp()})
-		self.ledger.
+		self.write()
 
 	def remove(self, blockname):
 		'''
