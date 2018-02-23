@@ -56,6 +56,7 @@ class PersonalFileLedger():
 		Load personal ledger into memory
 		'''
 		f = open(self.fp, 'r')
+		print "TESTING", f
 		self.ledger = json.load(f)
 		f.close()
 

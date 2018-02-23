@@ -213,7 +213,7 @@ def _init():
 		f.write('{}')
 		f.close()
 	if not os.path.exists(DCBFS_MAIN_DIR+'giant_ledger'):
-		f = open(DCBFS_MAIN_DIR+'personal_ledger', 'a')
+		f = open(DCBFS_MAIN_DIR+'giant_ledger', 'a')
 		f.write('{}')
 		f.close()
 	# personal_ledger.read() # not sure if this is needed
