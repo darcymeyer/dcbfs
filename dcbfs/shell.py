@@ -1,6 +1,6 @@
 from settings import *
 from encryptor import *
-from FileLedger import *
+from file_ledger import *
 from util import human_readable, _explore, _examine_block, _init
 import os
 import click
@@ -12,7 +12,7 @@ cli = click.Group()
 @click.option(u'--file', '-f','f', type=str, required=True, prompt=True)
 def examine_block(f):
 	'''
-	Interface for examining blocks.
+	Interface for examining blocks
 	'''
 	_examine_block(f)
 
@@ -31,6 +31,8 @@ def upload(f, password):
 def retrieve(f, password):
 	'''
 	Interface for retrieving files
+	'''
+	'''
 	(Does not delete the files)
 	'''
 	recreate_file(f, password)

@@ -1,5 +1,5 @@
 from settings import *
-from FileLedger import PersonalFileLedger
+from file_ledger import PersonalFileLedger
 from util import *
 import time
 import os
@@ -10,13 +10,12 @@ import click
 # note: initialization vector does not need to be secret
 
 personal_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)
+giant_ledger = GiantFileLedger(DCBFS_MAIN_DIR, known_hosts=KNOWN_HOSTS)
 
 def upload_file(filepath, password):
 	'''
 	Upload a file.
 	Currently only works with a local repo.
-
-	# TODO: add to the giant ledger
 	'''
 	key = hashlib.sha256(password.encode()).digest() # length 32
 	filename = os.path.basename(filepath).encode("ascii", "ignore")
@@ -32,15 +31,15 @@ def upload_file(filepath, password):
 			f.write(block)
 		block_num += 1
 	personal_ledger.add(filename, block_num, fn)
+	# TODO: add to the giant ledger
 
-def recreate_file(filename, pw):
+def recreate_file(filename, password):
 	'''
 	Retrieve a file.
 	Currently only works with local repo.
 	'''
 	num_blocks = get_num_blocks(filename)
 	with open(OUT_DIR + filename, 'ab+') as f:
-		password = pw#raw_input('Enter password: ')
 		key = hashlib.sha256(password.encode()).digest()
 		block_num = 0
 		while block_num < num_blocks:

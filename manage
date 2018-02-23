@@ -2,3 +2,7 @@
 
 # do the managing here
 print "test"
+
+with open("managertestfile.txt", "w") as f:
+    f.write("this is a test!")
+

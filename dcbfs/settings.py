@@ -12,5 +12,7 @@ OUT_DIR = DCBFS_MAIN_DIR + 'out/'
 # This probably won't be a single file in the production version
 GIANT_LEDGER_FILE = DCBFS_MAIN_DIR + 'giant_ledger'
 
+KNOWN_HOSTS = []
+
 # BLOCKSIZE must be a multiple of 16, and its unit is bytes
 BLOCKSIZE = 512 # will be much larger after testing phase

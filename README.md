@@ -27,6 +27,8 @@ Each publisher has one personal ledger. Its id is a hash of the publisher's secr
 
 Contains the information necessary (filename, number of blocks, derived key; derived key is hash of filename and key) to retrieve, decrypt, and assemble the blocks that form each original file.
 
+Each file must be stored with a unique name.
+
 ## Individual Blocks
 
 Each block has padding added to it so they are all the same size. They will have headers which contain the timestamp of when they were last checked and a hash of their id. Blocks are stored on individual machines.

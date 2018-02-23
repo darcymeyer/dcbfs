@@ -75,7 +75,10 @@ def generate_block_content(filepath, blocksize=BLOCKSIZE):
 			yield block
 
 def timestamp():
-	t = int(time())
+	return int(time())
+
+def timestamp_bytes():
+	t = timestamp()#int(time())
 	b = bytearray([0,0,0,0])
 	b[3] = t & 0xFF
 	t >>= 8
@@ -94,7 +97,7 @@ def make_block(filename, content, block_num, key):
 	iv = os.urandom(16)
 	block_content = encrypt_content(content, key, iv)
 	md5 = checksum(block_content)
-	block = id_hash + timestamp() + iv + md5 + block_content
+	block = id_hash + timestamp_bytes() + iv + md5 + block_content
 	return block
 
 def disassemble_block(block, block_num, key):
@@ -112,12 +115,16 @@ def get_remote_block(id_hash):
 	'''
 	Grab a single block, specified by `id_hash`
 	'''
+	blockname = hexlify(id_hash).decode('utf-8')
+	if os.path.exists(STORAGE_DIR+blockname):
 	#eventually this will query the giant ledger and grab the block from a remote machine
 	# it should also check with the md5 checksum
-	blockname = hexlify(id_hash).decode('utf-8')
-	with open(STORAGE_DIR+blockname, 'rb') as f:
-		block = f.read()
-		return block
+		with open(STORAGE_DIR+blockname, 'rb') as f:
+			block = f.read()
+			return block
+	else:
+		# find the block on a remote machine
+		pass
 
 def get_num_blocks(filename):
 	'''
@@ -195,12 +202,18 @@ def _init():
 		a) If it exists, it leaves it (To-Do: Check if syntax correct.)
 		b) If it doesn't, create it with an empty dictionary.
 	'''
-	root = os.path.expanduser("~")+'/.dcbfs/'
-	strg_dir = root+'storage'
-	if not os.path.exists(strg_dir):
-		os.makedirs(strg_dir)
-	if not os.path.exists(root+'personal_ledger'):
-		f = open(root+'personal_ledger', 'a')
+	if not os.path.exists(TEMP_DIR):
+		os.makedirs(TEMP_DIR)
+	if not os.path.exists(STORAGE_DIR):
+		os.makedirs(STORAGE_DIR)
+	if not os.path.exists(OUT_DIR):
+		os.makedirs(OUT_DIR)
+	if not os.path.exists(DCBFS_MAIN_DIR+'personal_ledger'):
+		f = open(DCBFS_MAIN_DIR+'personal_ledger', 'a')
 		f.write('{}')
 		f.close()
-	personal_ledger.read()
+	if not os.path.exists(DCBFS_MAIN_DIR+'giant_ledger'):
+		f = open(DCBFS_MAIN_DIR+'personal_ledger', 'a')
+		f.write('{}')
+		f.close()
+	# personal_ledger.read() # not sure if this is needed
