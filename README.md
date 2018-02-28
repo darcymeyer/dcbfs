@@ -4,10 +4,28 @@ A way to encrypt and upload files to multiple servers. **This project is still i
 
 This document outlines the structure and philosophy of the project. If you're interested in contributing, please read the [contributing guidelines](https://github.com/darcymeyer/dcbfs/blob/master/CONTRIBUTING.md) and [code of conduct](https://github.com/darcymeyer/dcbfs/blob/master/CODE_OF_CONDUCT.md).
 
-## Install
+### Installation
 
-To install dcbfs to `/usr/local/bin/` use the line below.
+To install dcbfs to `/usr/local/bin/`, run the following line in a terminal: 
 `python setup.py install --install-scripts=/usr/local/bin`
+
+### How to use
+
+dcbfs is used as a command line tool.
+
+	Usage: dcbfs [OPTIONS] COMMAND [ARGS]...
+
+	Options:
+	  --help  Show this message and exit.
+
+	Commands:
+	  delete    Interface for deleting files
+	  examine   Interface for examining blocks
+	  explore   Show uploaded files
+	  init      Initialize dcbfs, if not already initialized
+	  retrieve  Interface for retrieving files
+	  upload    Interface for uploading files
+
 
 ## Encryption
 

@@ -124,7 +124,14 @@ def get_remote_block(id_hash):
 			return block
 	else:
 		# find the block on a remote machine
-		pass
+		for location in giant_ledger.get_block_locations(blockname):
+			block = b''
+			r = requests.get("http://"+location+"/storage/"+blockname, 
+			  stream=True)
+			with open(STORAGE_DIR+blockname) as f:
+				for data in r.iter_content():
+					block = block+data
+					# https://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
 
 def get_num_blocks(filename):
 	'''
