@@ -78,7 +78,7 @@ def timestamp():
 	return int(time())
 
 def timestamp_bytes():
-	t = timestamp()#int(time())
+	t = timestamp()
 	b = bytearray([0,0,0,0])
 	b[3] = t & 0xFF
 	t >>= 8
@@ -98,7 +98,8 @@ def make_block(filename, content, block_num, key):
 	block_content = encrypt_content(content, key, iv)
 	md5 = checksum(block_content)
 	block = id_hash + timestamp_bytes() + iv + md5 + block_content
-	return block
+	blockname = str(hexlify(id_hash).decode('utf-8'))
+	return block, blockname
 
 def disassemble_block(block, block_num, key):
 	'''

@@ -21,13 +21,14 @@ def upload_file(filepath, password):
 	block_num = 0
 	fn = None
 	for content in generate_block_content(filepath):
-		block = make_block(filename, content, block_num, key)
-		fn = hexlify(block[:64]).decode('utf-8')
-		with open(STORAGE_DIR + fn, 'wb') as f:
+		block, blockname = make_block(filename, content, block_num, key)
+		# fn = hexlify(block[:64]).decode('utf-8')
+		with open(STORAGE_DIR + blockname, 'wb') as f:
 			# i question whether this is too long of a filename
 			# i question whether making the filename part of the data is necessary.
 			# Also. If it has the same name, but different data, this fails.
 			f.write(block)
+		giant_ledger.add(blockname, [THIS_LOCATION])
 		block_num += 1
 	personal_ledger.add(filename, block_num, fn)
 	# TODO: add to the giant ledger

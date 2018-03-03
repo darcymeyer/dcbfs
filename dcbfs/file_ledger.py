@@ -12,7 +12,7 @@ class PersonalFileLedger():
 		if os.path.exists(self.fp):
 			self.read()
 		else:
-			print('WARNING! Personal ledger doesn\'t exist! Try running `dcbfs init`.')
+			print 'WARNING! Personal ledger doesn\'t exist! Try running `dcbfs init`.'
 
 	def list_files(self):
 		return list(self.ledger.keys())
@@ -84,7 +84,7 @@ class GiantFileLedger():
 		if os.path.exists(self.fp):
 			self.read()
 		else:
-			print('WARNING! Giant ledger doesn\'t exist! Try running `dcbfs init`.')
+			print 'WARNING! Giant ledger doesn\'t exist! Try running `dcbfs init`.'
 
 	def get_block_locations(self, blockname):
 		try:
@@ -93,28 +93,35 @@ class GiantFileLedger():
 			raise ValueError("[ERROR] Block {} does not exist".format(blockname))
 		return locations # each location is timestamped
 
-	def get_id(self, fname):
-		'''
-		Get the storage id of a file
-		'''
-		try:
-			return self.ledger[fname][1]
-		except:
-			raise ValueError("File: " + str(fname)+" does not exist!!!")
+	# def get_id(self, fname):
+	# 	'''
+	# 	Get the storage id of a file
+	# 	'''
+	# 	try:
+	# 		return self.ledger[fname][1]
+	# 	except:
+	# 		raise ValueError("File: " + str(fname)+" does not exist!!!")
 
 	def add(self, blockname, locations):
 		'''
 		Add a block to the giant ledger
+
+		blockname: string
+		locations: list
 		'''
 		assert type(blockname) is str, 'Filename must be a string'
 		self.ledger[blockname] = {'timestamp':timestamp(), 
-								'locations':locations, 
+								'locations':{},
 								'valid':True}
+		for location in locations:
+			self.add_location(blockname, location)
 		self.write()
 
-	def add_location(self, blockname, location):
-		self.ledger[blockname]['locations'].append(
-			{'location':location, 'timestamp':timestamp()})
+	def add_location(self, blockname, address):
+		# self.ledger[blockname]['locations'].append(
+		# 	{'location': address, 'timestamp':timestamp()})
+		self.ledger[blockname]['locations'][address] = {
+			'timestamp':timestamp(), 'up':True}
 		self.write()
 
 	def remove(self, blockname):
@@ -144,6 +151,24 @@ class GiantFileLedger():
 		output_f.write(json.dumps(self.ledger, sort_keys=True))
 		output_f.close()
 
-	def merge_with_other(self, other):
-		pass
-		# TODO
+	def _resolve(self, bn, other_ledger):
+		other = other_ledger[bn]
+		for address in other['locations']:
+			if address in self.ledger[bn]['locations'] and \
+			  other['locations'][address]['timestamp'] > \
+			  self.ledger[bn]['locations'][address]['timestamp']:
+				self.ledger[bn]['locations'][address]['up'] = other['locations'][address]['up']
+				self.ledger[bn]['locations'][address]['timestamp'] = other['locations'][address]['timestamp']
+				# make shorter?
+		self.ledger[bn]['timestamp'] = timestamp()
+
+	def merge_with_other(self, other_address):
+		r = requests.get("http://"+location+"giant_ledger")
+		other_ledger = json.loads(r.text)
+		for bn in other_ledger:
+			if bn in self.ledger:
+				self._resolve(bn, other_ledger)
+			else:
+				self.ledger[bn] = other_ledger[bn]
+		self.write()
+		# TODO: test

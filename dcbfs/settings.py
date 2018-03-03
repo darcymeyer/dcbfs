@@ -16,3 +16,5 @@ KNOWN_HOSTS = []
 
 # BLOCKSIZE must be a multiple of 16, and its unit is bytes
 BLOCKSIZE = 512 # will be much larger after testing phase
+
+THIS_LOCATION = 'localhost:8000'
