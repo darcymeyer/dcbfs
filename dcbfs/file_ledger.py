@@ -4,6 +4,11 @@ import pdb
 from util import timestamp
 import requests
 
+
+# if we add self.read() to the beginning of every function and self.write()
+# at the end, then there won't be problems with multiple instances of each 
+# ledger. this seems like bad practice.
+
 class PersonalFileLedger():
 	'''
 	Represents the file ledger in memory
@@ -13,15 +18,18 @@ class PersonalFileLedger():
 		if os.path.exists(self.fp):
 			self.read()
 		else:
-			print 'WARNING! Personal ledger doesn\'t exist! Try running `dcbfs init`.'
+			print 'WARNING! Personal ledger doesn\'t exist! \
+			  Try running `dcbfs init`.'
 
 	def list_files(self):
+		self.read()
 		return list(self.ledger.keys())
 
 	def get_id(self, fname):
 		'''
 		Get the storage id of a file
 		'''
+		self.read()
 		try:
 			return self.ledger[fname][1]
 		except:
@@ -31,6 +39,7 @@ class PersonalFileLedger():
 		'''
 		Get the number of blocks over which a file is stored
 		'''
+		self.read()
 		try:
 			return self.ledger[fname][0]
 		except:
@@ -40,6 +49,7 @@ class PersonalFileLedger():
 		'''
 		Add an entry to the personal ledger
 		'''
+		self.read()
 		assert type(filename) is str, 'Filename must be a string'
 		self.ledger[filename] = (str(num_blocks), fn)
 		self.write()
@@ -48,6 +58,7 @@ class PersonalFileLedger():
 		'''
 		Remove a filename from the personal ledger
 		'''
+		self.read()
 		assert type(filename) is str, 'Filename must be a string'
 		del self.ledger[filename]
 		self.write()
@@ -85,23 +96,17 @@ class GiantFileLedger():
 		if os.path.exists(self.fp):
 			self.read()
 		else:
-			print 'WARNING! Giant ledger doesn\'t exist! Try running `dcbfs init`.'
+			print 'WARNING! Giant ledger doesn\'t exist! \
+			  Try running `dcbfs init`.'
 
 	def get_block_locations(self, blockname):
+		self.read()
 		try:
 			locations = self.ledger[blockname]['locations']
 		except:
-			raise ValueError("[ERROR] Block {} does not exist".format(blockname))
+			raise ValueError("[ERROR] Block {} does not exist"
+			  .format(blockname))
 		return locations # each location is timestamped
-
-	# def get_id(self, fname):
-	# 	'''
-	# 	Get the storage id of a file
-	# 	'''
-	# 	try:
-	# 		return self.ledger[fname][1]
-	# 	except:
-	# 		raise ValueError("File: " + str(fname)+" does not exist!!!")
 
 	def add(self, blockname, locations):
 		'''
@@ -110,6 +115,7 @@ class GiantFileLedger():
 		blockname: string
 		locations: list
 		'''
+		self.read()
 		assert type(blockname) is str, 'Filename must be a string'
 		self.ledger[blockname] = {'timestamp':timestamp(), 
 								'locations':{},
@@ -119,8 +125,7 @@ class GiantFileLedger():
 		self.write()
 
 	def add_location(self, blockname, address):
-		# self.ledger[blockname]['locations'].append(
-		# 	{'location': address, 'timestamp':timestamp()})
+		self.read()
 		self.ledger[blockname]['locations'][address] = {
 			'timestamp':timestamp(), 'up':True}
 		self.write()
@@ -131,6 +136,7 @@ class GiantFileLedger():
 
 		Eventually, this should be cryptographically secure
 		'''
+		self.read()
 		assert type(filename) is str, 'Filename must be a string'
 		del self.ledger[blockname]
 		self.write()
@@ -147,7 +153,6 @@ class GiantFileLedger():
 		'''
 		Write the personal ledger to file
 		'''
-		# self.ledger['timestamp'] = timestamp()
 		output_f = open(self.fp, 'w')
 		output_f.write(json.dumps(self.ledger, sort_keys=True))
 		output_f.close()
@@ -159,12 +164,15 @@ class GiantFileLedger():
 			if address in self.ledger[bn]['locations'] and \
 			  other['locations'][address]['timestamp'] > \
 			  self.ledger[bn]['locations'][address]['timestamp']:
-				self.ledger[bn]['locations'][address]['up'] = other['locations'][address]['up']
-				self.ledger[bn]['locations'][address]['timestamp'] = other['locations'][address]['timestamp']
+				self.ledger[bn]['locations'][address]['up'] = \
+				  other['locations'][address]['up']
+				self.ledger[bn]['locations'][address]['timestamp'] = \
+				  other['locations'][address]['timestamp']
 				# make shorter?
 		self.ledger[bn]['timestamp'] = timestamp()
 
 	def merge_with_other(self, other_address):
+		self.read()
 		r = requests.get("http://"+other_address+"/giant_ledger")
 		other_ledger = json.loads(r.text)
 		print "other_ledger", other_ledger
@@ -174,4 +182,4 @@ class GiantFileLedger():
 			else:
 				self.ledger[bn] = other_ledger[bn]
 		self.write()
-		# TODO: test
+		# TODO: test more thoroughly. i think it's working.

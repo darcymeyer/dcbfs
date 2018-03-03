@@ -9,6 +9,7 @@ import json
 import pdb
 from datetime import datetime
 import struct
+import requets
 
 def block_examination_help_text():
 	'''
@@ -112,7 +113,21 @@ def disassemble_block(block, block_num, key):
 	decrypted = decrypt_content(encrypted, key, iv)
 	return decrypted
 
-def get_remote_block(id_hash):
+def get_remote_block(addr, bn):
+	'''
+	addr: remote address
+	bn: blockname
+	'''
+	# should also raise error for uncontactable server
+	block = b''
+	r = requests.get("http://"+addr+"/storage/"+bn, stream=True)
+	# with open(STORAGE_DIR+blockname) as f:
+	for data in r.iter_content():
+		block = block+data
+	raise Exception('corrupt block') if block[84:84+16] != checksum(block)
+	return block
+
+def get_block(id_hash):
 	'''
 	Grab a single block, specified by `id_hash`
 	'''
@@ -124,15 +139,17 @@ def get_remote_block(id_hash):
 			block = f.read()
 			return block
 	else:
-		# find the block on a remote machine
-		for location in giant_ledger.get_block_locations(blockname):
-			block = b''
-			r = requests.get("http://"+location+"/storage/"+blockname, 
-			  stream=True)
-			with open(STORAGE_DIR+blockname) as f:
-				for data in r.iter_content():
-					block = block+data
-					# https://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
+		# # find the block on a remote machine
+		# for location in giant_ledger.get_block_locations(blockname):
+		# 	block = b''
+		# 	r = requests.get("http://"+location+"/storage/"+blockname, 
+		# 	  stream=True)
+		# 	with open(STORAGE_DIR+blockname) as f:
+		# 		for data in r.iter_content():
+		# 			block = block+data
+		# 			# https://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
+		# wtf. fix.
+		pass
 
 def get_num_blocks(filename):
 	'''

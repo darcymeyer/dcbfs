@@ -17,4 +17,8 @@ KNOWN_HOSTS = []
 # BLOCKSIZE must be a multiple of 16, and its unit is bytes
 BLOCKSIZE = 512 # will be much larger after testing phase
 
+MAX_STORAGE = 1000000 # currently, a megabyte (written in bytes)
+
 THIS_LOCATION = 'localhost:8000' # is supposed to be for external access
+
+REDUNDANCY = 2 # this should be greater in production

@@ -45,7 +45,7 @@ def recreate_file(filename, password):
 		while block_num < num_blocks:
 			id_hash = hash_data(filename+"/"+str(block_num))
 			# this is a terrible id. the hash should include a nonce or something (to be stored in personal ledger)
-			block = get_remote_block(id_hash)
+			block = get_block(id_hash)
 			content = disassemble_block(block, block_num, key)
 			f.write(content)
 			block_num += 1
