@@ -1,7 +1,8 @@
 import os
 import json
 import pdb
-from util import timestamp
+def timestamp(): # from util import timestamp
+	return int(time())
 import requests
 
 

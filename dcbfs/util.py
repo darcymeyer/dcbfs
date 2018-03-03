@@ -1,6 +1,9 @@
 from Crypto.Hash import SHA512, MD5
 from Crypto.Cipher import AES
 from settings import *
+from file_ledger import PersonalFileLedger, GiantFileLedger
+personal_ledger = PersonalFileLedger(DCBFS_MAIN_DIR)
+giant_ledger = GiantFileLedger(DCBFS_MAIN_DIR, known_hosts=KNOWN_HOSTS)
 import os
 from time import time
 from binascii import hexlify
@@ -9,7 +12,7 @@ import json
 import pdb
 from datetime import datetime
 import struct
-import requets
+import requests
 
 def block_examination_help_text():
 	'''
@@ -121,35 +124,29 @@ def get_remote_block(addr, bn):
 	# should also raise error for uncontactable server
 	block = b''
 	r = requests.get("http://"+addr+"/storage/"+bn, stream=True)
-	# with open(STORAGE_DIR+blockname) as f:
 	for data in r.iter_content():
 		block = block+data
-	raise Exception('corrupt block') if block[84:84+16] != checksum(block)
+	# if block[84:84+16] != checksum(block):
+	# 	raise Exception('corrupt block') # later
 	return block
 
-def get_block(id_hash):
+def get_block(id_hash): # returns block data
 	'''
 	Grab a single block, specified by `id_hash`
 	'''
 	blockname = hexlify(id_hash).decode('utf-8')
+	block = None
 	if os.path.exists(STORAGE_DIR+blockname):
-	#eventually this will query the giant ledger and grab the block from a remote machine
-	# it should also check with the md5 checksum
 		with open(STORAGE_DIR+blockname, 'rb') as f:
 			block = f.read()
 			return block
 	else:
-		# # find the block on a remote machine
-		# for location in giant_ledger.get_block_locations(blockname):
-		# 	block = b''
-		# 	r = requests.get("http://"+location+"/storage/"+blockname, 
-		# 	  stream=True)
-		# 	with open(STORAGE_DIR+blockname) as f:
-		# 		for data in r.iter_content():
-		# 			block = block+data
-		# 			# https://stackoverflow.com/questions/22676/how-do-i-download-a-file-over-http-using-python
-		# wtf. fix.
-		pass
+		locations = giant_ledger.get_block_locations(blockname)
+		for addr in locations:
+			block = get_remote_block(addr, bn)
+			if block:
+				# it should also check with the md5 checksum
+				return block
 
 def get_num_blocks(filename):
 	'''
