@@ -2,6 +2,7 @@ import os
 import json
 import pdb
 from util import timestamp
+import requests
 
 class PersonalFileLedger():
 	'''
@@ -146,13 +147,14 @@ class GiantFileLedger():
 		'''
 		Write the personal ledger to file
 		'''
-		self.ledger['timestamp'] = timestamp()
+		# self.ledger['timestamp'] = timestamp()
 		output_f = open(self.fp, 'w')
 		output_f.write(json.dumps(self.ledger, sort_keys=True))
 		output_f.close()
 
 	def _resolve(self, bn, other_ledger):
 		other = other_ledger[bn]
+		print "other", other
 		for address in other['locations']:
 			if address in self.ledger[bn]['locations'] and \
 			  other['locations'][address]['timestamp'] > \
@@ -163,8 +165,9 @@ class GiantFileLedger():
 		self.ledger[bn]['timestamp'] = timestamp()
 
 	def merge_with_other(self, other_address):
-		r = requests.get("http://"+location+"giant_ledger")
+		r = requests.get("http://"+other_address+"/giant_ledger")
 		other_ledger = json.loads(r.text)
+		print "other_ledger", other_ledger
 		for bn in other_ledger:
 			if bn in self.ledger:
 				self._resolve(bn, other_ledger)
